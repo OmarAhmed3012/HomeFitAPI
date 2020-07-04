@@ -21,12 +21,6 @@ app.use(bodyParser.json());
 //support parsing of application/x-www-form-urlencoded post data
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const router = new express.Router();
-
-router.get('/', async (req, res) => {
-	return res.status(200).send({ message: 'Welcome to HomeFit' });
-});
-
 app.use(express.json());
 app.use(userRouter);
 app.use(productRouter);
