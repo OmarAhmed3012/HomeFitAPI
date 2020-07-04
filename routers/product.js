@@ -73,7 +73,9 @@ router.get('/products/:id', async (req, res) => {
 	const _id = req.params.id;
 
 	try {
-		const product = await Product.findOne({ _id });
+		const product = await Product.findOne({ _id }).select(
+			'name description width height depth color categoryId'
+		);
 
 		if (!product) {
 			return res.status(404).send();

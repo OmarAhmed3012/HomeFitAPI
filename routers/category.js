@@ -36,7 +36,7 @@ router.get('/categories/:id', async (req, res) => {
 	const _id = req.params.id;
 
 	try {
-		const category = await Category.findOne({ _id });
+		const category = await Category.findOne({ _id }).select('name');
 
 		if (!category) {
 			return res.status(404).send();
