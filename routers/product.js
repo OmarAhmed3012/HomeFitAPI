@@ -85,7 +85,7 @@ router.get('/products/:id', async (req, res) => {
 
 //Get Products in the Category
 
-router.get('/productscat/:id', async (req, res) => {
+router.get('/categoryProducts/:id', async (req, res) => {
 	const _id = req.params.id;
 	console.log(req.params.id);
 
