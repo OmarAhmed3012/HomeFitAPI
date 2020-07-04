@@ -5,7 +5,7 @@ const sharp = require('sharp');
 const Product = require('../models/product');
 const router = new express.Router();
 
-router.post('/categorys', async (req, res) => {
+router.post('/categories', async (req, res) => {
 	const category = new Category({
 		...req.body,
 	});
@@ -18,21 +18,21 @@ router.post('/categorys', async (req, res) => {
 	}
 });
 
-router.get('/categorys', async (req, res) => {
+router.get('/categories', async (req, res) => {
 	try {
-		const categorys = await Category.find().select('name');
+		const categories = await Category.find().select('name');
 
-		if (!categorys) {
+		if (!categories) {
 			return res.status(404).send();
 		}
 
-		res.send(categorys);
+		res.send(categories);
 	} catch (e) {
 		res.status(500).send();
 	}
 });
 
-router.get('/categorys/:id', async (req, res) => {
+router.get('/categories/:id', async (req, res) => {
 	const _id = req.params.id;
 
 	try {
@@ -48,7 +48,7 @@ router.get('/categorys/:id', async (req, res) => {
 	}
 });
 
-router.patch('/categorys/:id', async (req, res) => {
+router.patch('/categories/:id', async (req, res) => {
 	const updates = Object.keys(req.body);
 	const allowedUpdates = ['name', 'image'];
 	const isValidOperation = updates.every(update =>
@@ -74,7 +74,7 @@ router.patch('/categorys/:id', async (req, res) => {
 	}
 });
 
-router.delete('/categorys/:id', async (req, res) => {
+router.delete('/categories/:id', async (req, res) => {
 	try {
 		// Delete category Products when category is removed
 		const product = await Product.deleteMany({ categoryId: req.params.id });
@@ -106,7 +106,7 @@ const upload = multer({
 });
 
 router.post(
-	'/categorys/:id/image',
+	'/categories/:id/image',
 	upload.single('image'),
 	async (req, res) => {
 		const buffer = await sharp(req.file.buffer)
@@ -123,14 +123,14 @@ router.post(
 	}
 );
 
-router.delete('/categorys/:id/image', async (req, res) => {
+router.delete('/categories/:id/image', async (req, res) => {
 	const category = await Category.findOne({ _id: req.params.id });
 	category.image = undefined;
 	await category.save();
 	res.send();
 });
 
-router.get('/categorys/:id/image', async (req, res) => {
+router.get('/categories/:id/image', async (req, res) => {
 	try {
 		const category = await Category.findById(req.params.id);
 
