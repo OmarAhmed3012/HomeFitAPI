@@ -18,6 +18,16 @@ categorySchema.virtual('products', {
 })
 
 
+categorySchema.methods.toJSON = function () {
+    const category = this
+    const categoryObject = category.toObject()
+
+    delete categoryObject.image
+
+    return categoryObject
+}
+
+
 const Category = mongoose.model('Category', categorySchema)
 
 module.exports = Category

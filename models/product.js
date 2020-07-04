@@ -75,6 +75,16 @@ const productSchema = new mongoose.Schema({
     timestamps: true
 })
 
+
+productSchema.methods.toJSON = function () {
+    const product = this
+    const productObject = product.toObject()
+
+    delete productObject.image
+
+    return productObject
+}
+
 const Product = mongoose.model('Product', productSchema)
 
 module.exports = Product

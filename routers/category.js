@@ -20,7 +20,7 @@ router.post('/categories', async (req, res) => {
 
 router.get('/categories', async (req, res) => {
 	try {
-		const categories = await Category.find().select('name');
+		const categories = await Category.find();
 
 		if (!categories) {
 			return res.status(404).send();
@@ -36,7 +36,7 @@ router.get('/categories/:id', async (req, res) => {
 	const _id = req.params.id;
 
 	try {
-		const category = await Category.findOne({ _id }).select('name');
+		const category = await Category.findOne({ _id });
 
 		if (!category) {
 			return res.status(404).send();

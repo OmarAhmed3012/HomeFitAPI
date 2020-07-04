@@ -55,9 +55,7 @@ router.get('/products', async (req, res) => {
 	// const _id = req.params.id
 
 	try {
-		const products = await Product.find().select(
-			'name description width height depth color categoryId'
-		);
+		const products = await Product.find();
 
 		if (!products) {
 			return res.status(404).send();
@@ -73,9 +71,7 @@ router.get('/products/:id', async (req, res) => {
 	const _id = req.params.id;
 
 	try {
-		const product = await Product.findOne({ _id }).select(
-			'name description width height depth color categoryId'
-		);
+		const product = await Product.findOne({ _id });
 
 		if (!product) {
 			return res.status(404).send();
