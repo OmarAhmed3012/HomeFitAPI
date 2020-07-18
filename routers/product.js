@@ -58,12 +58,11 @@ router.get('/products', async (req, res) => {
 		const products = await Product.find().select(
 			'name description width height depth color categoryId'
 		);
-
 		if (!products) {
 			return res.status(404).send();
 		}
 
-		res.send(products);
+		res.send(products.length);
 	} catch (e) {
 		res.status(500).send();
 	}
