@@ -61,7 +61,7 @@ router.get('/products', async (req, res) => {
 			return res.status(404).send();
 		}
 
-		res.send(products.length);
+		res.send(products);
 	} catch (e) {
 		res.status(500).send();
 	}
