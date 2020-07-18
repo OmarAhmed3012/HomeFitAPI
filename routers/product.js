@@ -139,17 +139,14 @@ router.patch('/products/:id', async (req, res) => {
 });
 
 router.delete('/products/:id', async (req, res) => {
-	try {
-		const product = await Product.findOneAndDelete({ _id: req.params.id });
-
-		if (!product) {
-			res.status(404).send();
-		}
-
-		res.send(product);
-	} catch (e) {
-		res.status(500).send();
-	}
+	Product.deleteOne({ _id: req.params.id })
+		.exec()
+		.then(result => {
+			return res.status(200).json({ message: 'Product deleted' });
+		})
+		.catch(err => {
+			return res.status(500).json({ error: err });
+		});
 });
 
 const upload = multer({
