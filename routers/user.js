@@ -57,6 +57,20 @@ router.get('/users/me', auth, async (req, res) => {
     res.send(req.user)
 })
 
+router.get('/users', async (req, res) => {
+    try {
+		const users = await User.find();
+
+		if (!users) {
+			return res.status(404).send();
+		}
+
+		res.send(users);
+	} catch (e) {
+		res.status(500).send();
+	}
+})
+
  //Switch account Type 
  router.patch('/switchAcc/:id', auth, async (req, res) => { 
     if(req.user.accType === 'admin') { 
