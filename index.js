@@ -3,9 +3,11 @@ const userRouter = require('./routers/user');
 const mongo = require('./db/mongoose');
 const productRouter = require('./routers/product');
 const categoryRouter = require('./routers/category');
-
+var cors = require('cors');
 const app = express();
 const port = process.env.PORT || 3000;
+
+app.use(cors());
 
 app.use((req, res, next) => {
 	res.header('Access-Control-Allow-Origin', '*');
