@@ -18,40 +18,26 @@ router.post('/products/:id', async (req, res) => {
 		res.status(400).send(e);
 	}
 });
-/*
-// GET /products?completed=true
+
 // GET /products?limit=10&skip=20
-// GET /products?sortBy=createdAt:desc
 router.get('/products', async (req, res) => {
-    const match = {}
-    const sort = {}
-
-    if (req.query.completed) {
-        match.completed = req.query.completed === 'true'
-    }
-
-    if (req.query.sortBy) {
-        const parts = req.query.sortBy.split(':')
-        sort[parts[0]] = parts[1] === 'desc' ? -1 : 1
-    }
 
     try {
-        await req.user.populate({
-            path: 'products',
-            match,
-            options: {
-                limit: parseInt(req.query.limit),
-                skip: parseInt(req.query.skip),
-                sort
-            }
-        }).execPopulate()
-        res.send(req.user.products)
-    } catch (e) {
-        res.status(500).send()
-    }
-})*/
+		const limit = parseInt(req.query.limit); 
+		const skip = parseInt(req.query.skip);
 
-router.get('/products', async (req, res) => {
+		const products = await Product.find({}).skip(skip).limit(limit);
+  
+		return res.status(200).json(products);
+	  } catch(e){
+		return res.status(500).json(e)
+	  }
+
+
+  }
+)
+
+router.get('/allproducts', async (req, res) => {
 	// const _id = req.params.id
 
 	try {
