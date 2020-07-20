@@ -69,6 +69,22 @@ router.get('/products/:id', async (req, res) => {
 	}
 });
 
+router.get('/totalproducts', async (req, res) => {
+	try {
+		await Product.countDocuments({}, function(err, count) {
+			if (!count) {
+				return res.status(404).send(err);
+			}
+			else {
+				res.json(count)
+			}
+		})
+	}
+	catch (e) {
+		res.status(500).send(e)
+	}
+})
+
 //Get Products in the Category
 
 router.get('/categoryProducts/:id', async (req, res) => {

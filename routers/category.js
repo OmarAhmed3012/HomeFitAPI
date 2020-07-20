@@ -48,6 +48,22 @@ router.get('/categories/:id', async (req, res) => {
 	}
 });
 
+router.get('/totalcategories', async (req, res) => {
+	try {
+		await Category.countDocuments({}, function(err, count) {
+			if (!count) {
+				return res.status(404).send(err);
+			}
+			else {
+				res.json(count)
+			}
+		})
+	}
+	catch (e) {
+		res.status(500).send(e)
+	}
+})
+
 router.patch('/categories/:id', async (req, res) => {
 	const updates = Object.keys(req.body);
 	const allowedUpdates = ['name', 'image'];

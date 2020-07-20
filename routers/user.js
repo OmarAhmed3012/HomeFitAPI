@@ -71,6 +71,22 @@ router.get('/users', async (req, res) => {
 	}
 })
 
+router.get('/totalusers', async (req, res) => {
+	try {
+		await User.countDocuments({}, function(err, count) {
+			if (!count) {
+				return res.status(404).send(err);
+			}
+			else {
+				res.json(count)
+			}
+		})
+	}
+	catch (e) {
+		res.status(500).send(e)
+	}
+})
+
  //Switch account Type 
  router.patch('/switchAcc/:id', auth, async (req, res) => { 
     if(req.user.accType === 'admin') { 
