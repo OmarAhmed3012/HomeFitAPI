@@ -71,6 +71,22 @@ router.get('/users', async (req, res) => {
 	}
 })
 
+router.get('/totalusers', async (req, res) => {
+	try {
+		await User.countDocuments({}, function(err, count) {
+			if (!count) {
+				return res.status(404).send(err);
+			}
+			else {
+				res.json(count)
+			}
+		})
+	}
+	catch (e) {
+		res.status(500).send(e)
+	}
+})
+
  //Switch account Type 
  router.patch('/switchAcc/:id', auth, async (req, res) => { 
     if(req.user.accType === 'admin') { 
@@ -125,6 +141,25 @@ router.patch('/users/me', auth, async (req, res) => {
     }
 })
 
+// Delete Profile
+router.delete('/deleteuser/:id', auth, async  (req, res) => {
+    if(req.user.accType === 'admin') {
+        await User.deleteOne({ _id: req.params.id })
+        .exec()
+		.then(result => {
+			return res.status(200).json({ message: 'User deleted' });
+		})
+		.catch(err => {
+			return res.status(500).json({ error: err });
+		});
+    }
+    else {
+        res.status(401).send({ error: 'Please authenticate as an admin.' })
+    }
+})
+
+
+// Delete my own profile
 router.delete('/users/me', auth, async (req, res) => {
     try {
         await req.user.remove()
