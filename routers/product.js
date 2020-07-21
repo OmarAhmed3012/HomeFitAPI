@@ -246,7 +246,7 @@ router.get('/products/:id/model', async (req, res) => {
 		);
 		//const model = await router.get(product.model_path);
 		//console.log(model);
-		res.send(data);
+		res.json({ data: 'hello' });
 	} catch (e) {
 		res.status(404).send();
 	}
