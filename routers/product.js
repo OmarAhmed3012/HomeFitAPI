@@ -5,6 +5,7 @@ const multer = require('multer');
 const sharp = require('sharp');
 const router = new express.Router();
 const uploadFile = require('../middleware/fileUpload');
+const uploadTexture = require('../middleware/textureUpload');
 
 router.post('/products/:id', async (req, res) => {
 	const product = new Product({
@@ -68,19 +69,17 @@ router.get('/products/:id', async (req, res) => {
 
 router.get('/totalproducts', async (req, res) => {
 	try {
-		await Product.countDocuments({}, function(err, count) {
+		await Product.countDocuments({}, function (err, count) {
 			if (!count) {
 				return res.status(404).send(err);
+			} else {
+				res.json(count);
 			}
-			else {
-				res.json(count)
-			}
-		})
+		});
+	} catch (e) {
+		res.status(500).send(e);
 	}
-	catch (e) {
-		res.status(500).send(e)
-	}
-})
+});
 
 //Get Products in the Category
 
@@ -202,7 +201,7 @@ router.get('/products/:id/image', async (req, res) => {
 });
 
 router.post(
-	'/products/:id/model/:folderId',
+	'/products/:id/model/',
 	uploadFile.array('productModel'),
 
 	async (req, res) => {
@@ -214,6 +213,19 @@ router.post(
 			product.model_path = '/' + product.model_path;
 			product.save();
 			res.status(200).json({ product });
+		} catch (error) {
+			res.status(500).json({ error });
+		}
+	}
+);
+
+router.post(
+	'/products/:id/texture',
+	uploadTexture.single('productTexture'),
+
+	async (req, res) => {
+		try {
+			res.status(200).json({ message: 'Texture uploaded!' });
 		} catch (error) {
 			res.status(500).json({ error });
 		}
