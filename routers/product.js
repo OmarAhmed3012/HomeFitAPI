@@ -110,7 +110,7 @@ router.patch('/products/:id', async (req, res) => {
 		'name',
 		'description',
 		'price',
-		'category',
+		'categoryId',
 		'image',
 		'color',
 		'width',
