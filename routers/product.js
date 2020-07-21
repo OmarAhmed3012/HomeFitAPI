@@ -6,6 +6,7 @@ const sharp = require('sharp');
 const router = new express.Router();
 const uploadFile = require('../middleware/fileUpload');
 const uploadTexture = require('../middleware/textureUpload');
+const { default: Axios } = require('axios');
 
 router.post('/products/:id', async (req, res) => {
 	const product = new Product({
@@ -232,21 +233,24 @@ router.post(
 	}
 );
 
-// router.get('/products/:id/model', async (req, res) => {
-// 	try {
-// 		const product = await Product.findById(req.params.id);
+router.get('/products/:id/model', async (req, res) => {
+	try {
+		const product = await Product.findById(req.params.id);
 
-// 		if (!product) {
-// 			res.status(404).send({ error: 'Product not found!' });
-// 		}
-// 		res.set('Content-Type', 'application/json');
-// 		const model = await router.get(product.model_path);
-// 		console.log(model);
-// 		res.send(model);
-// 	} catch (e) {
-// 		res.status(404).send();
-// 	}
-// });
+		if (!product) {
+			res.status(404).send({ error: 'Product not found!' });
+		}
+		res.set('Content-Type', 'application/json');
+		const { data } = await Axios.get(
+			'http://bf3f888191c2.ngrok.io/uploads/5f172bc8199f730004a43b67/scene.gltf'
+		);
+		//const model = await router.get(product.model_path);
+		//console.log(model);
+		res.send(data);
+	} catch (e) {
+		res.status(404).send();
+	}
+});
 
 // router.get('/uploads/5/scene.gltf', async (req, res) => {
 // 	try {
