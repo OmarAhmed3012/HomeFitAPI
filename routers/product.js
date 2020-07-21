@@ -242,7 +242,7 @@ router.get('/products/:id/model', async (req, res) => {
 		}
 		res.set('Content-Type', 'application/json');
 		const { data } = await Axios.get(
-			'http://bf3f888191c2.ngrok.io/uploads/5f172bc8199f730004a43b67/scene.gltf'
+			'https://majestic-glacier-47307.herokuapp.com/uploads/5f172bc8199f730004a43b67/scene.gltf'
 		);
 		//const model = await router.get(product.model_path);
 		//console.log(model);
