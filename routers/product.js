@@ -4,6 +4,7 @@ const auth = require('../middleware/auth');
 const multer = require('multer');
 const sharp = require('sharp');
 const router = new express.Router();
+const uploadFile = require('../middleware/fileUpload');
 
 router.post('/products/:id', async (req, res) => {
 	const product = new Product({
@@ -21,21 +22,17 @@ router.post('/products/:id', async (req, res) => {
 
 // GET /products?limit=10&skip=20
 router.get('/products', async (req, res) => {
-
-    try {
-		const limit = parseInt(req.query.limit); 
+	try {
+		const limit = parseInt(req.query.limit);
 		const skip = parseInt(req.query.skip);
 
 		const products = await Product.find({}).skip(skip).limit(limit);
-  
+
 		return res.status(200).json(products);
-	  } catch(e){
-		return res.status(500).json(e)
-	  }
-
-
-  }
-)
+	} catch (e) {
+		return res.status(500).json(e);
+	}
+});
 
 router.get('/allproducts', async (req, res) => {
 	// const _id = req.params.id
@@ -187,5 +184,49 @@ router.get('/products/:id/image', async (req, res) => {
 		res.status(404).send();
 	}
 });
+
+router.post(
+	'/products/:id/model/:folderId',
+	uploadFile.array('productModel'),
+
+	async (req, res) => {
+		try {
+			let modelPath = req.files[0].path;
+			const product = await Product.findById(req.params.id);
+			product.model_path = modelPath.replace('\\', '/');
+			product.model_path = product.model_path.replace('\\', '/');
+			product.model_path = '/' + product.model_path;
+			product.save();
+			res.status(200).json({ product });
+		} catch (error) {
+			res.status(500).json({ error });
+		}
+	}
+);
+
+// router.get('/products/:id/model', async (req, res) => {
+// 	try {
+// 		const product = await Product.findById(req.params.id);
+
+// 		if (!product) {
+// 			res.status(404).send({ error: 'Product not found!' });
+// 		}
+// 		res.set('Content-Type', 'application/json');
+// 		const model = await router.get(product.model_path);
+// 		console.log(model);
+// 		res.send(model);
+// 	} catch (e) {
+// 		res.status(404).send();
+// 	}
+// });
+
+// router.get('/uploads/5/scene.gltf', async (req, res) => {
+// 	try {
+// 		res.set('Content-Type', 'application/json');
+// 		console.log('hello');
+// 	} catch (e) {
+// 		res.status(404).send();
+// 	}
+// });
 
 module.exports = router;
