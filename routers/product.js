@@ -3,6 +3,7 @@ const Product = require('../models/product');
 const auth = require('../middleware/auth');
 const multer = require('multer');
 const sharp = require('sharp');
+const fs = require('fs');
 const router = new express.Router();
 const uploadFile = require('../middleware/fileUpload');
 const uploadTexture = require('../middleware/textureUpload');
@@ -114,6 +115,7 @@ router.patch('/products/:id', async (req, res) => {
 		'width',
 		'height',
 		'depth',
+		'model_path',
 	];
 	const isValidOperation = updates.every(update =>
 		allowedUpdates.includes(update)
@@ -236,28 +238,33 @@ router.post(
 
 router.get('/products/:id/model', async (req, res) => {
 	try {
-		const product = await Product.findById(req.params.id);
-
+		const product = await Product.findById(req.params.id).select('_id');
 		if (!product) {
 			res.status(404).send({ error: 'Product not found!' });
 		}
 		res.set('Content-Type', 'application/json');
-		const { data } = await Axios.get(
-			`https://majestic-glacier-47307.herokuapp.com/uploads/${product._id}/scene.gltf`
-		);
-		//const model = await router.get(product.model_path);
-		//console.log(model);
+		const url = `http://${req.headers.host}/uploads/${product._id}/scene.gltf`;
+		console.log(url);
+		const { data } = await Axios.get(url);
+
 		res.send(data);
 	} catch (e) {
-		res.status(404).send();
+		res.status(404).send({ error: e });
 	}
 });
 
 router.delete('/products/:id/model', async (req, res) => {
 	try {
-		rimraf(`uploads/${req.params.id}`);
-
-		res.json({ message: 'Model deleted!' });
+		const product = await Product.findById(req.params.id);
+		product.model_path = '';
+		product.save();
+		// await Axios.patch(`${req.headers.host}/products/${id}`, {
+		// 	model_path: 'test',
+		// });
+		fs.rmdir(`uploads/${req.params.id}`, { recursive: true }, err => {
+			if (err) throw err;
+		});
+		res.json({ message: 'Model path deleted!' });
 	} catch (e) {
 		res.status(404).send();
 	}
