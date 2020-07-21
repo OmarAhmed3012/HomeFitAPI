@@ -7,6 +7,7 @@ const router = new express.Router();
 const uploadFile = require('../middleware/fileUpload');
 const uploadTexture = require('../middleware/textureUpload');
 const { default: Axios } = require('axios');
+var rimraf = require('rimraf');
 
 router.post('/products/:id', async (req, res) => {
 	const product = new Product({
@@ -247,6 +248,16 @@ router.get('/products/:id/model', async (req, res) => {
 		//const model = await router.get(product.model_path);
 		//console.log(model);
 		res.send(data);
+	} catch (e) {
+		res.status(404).send();
+	}
+});
+
+router.delete('/products/:id/model', async (req, res) => {
+	try {
+		rimraf(`uploads/${req.params.id}`);
+
+		res.json({ message: 'Model deleted!' });
 	} catch (e) {
 		res.status(404).send();
 	}
