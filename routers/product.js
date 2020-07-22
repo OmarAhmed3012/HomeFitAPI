@@ -251,6 +251,21 @@ router.get('/products/:id/model', async (req, res) => {
 	}
 });
 
+router.get('/products/:id/model/:texture', async (req, res) => {
+	try {
+		const product = await Product.findById(req.params.id).select('_id');
+		if (!product) {
+			res.status(404).send({ error: 'Product not found!' });
+		}
+		const url = `http://${req.headers.host}/uploads/${product._id}/textures/${req.params.texture}`;
+		const { data } = await Axios.get(url);
+		res.set('Content-Type', 'image/png');
+		res.send(data);
+	} catch (e) {
+		res.status(404).send({ error: e });
+	}
+});
+
 router.delete('/products/:id/model', async (req, res) => {
 	try {
 		const product = await Product.findById(req.params.id);
