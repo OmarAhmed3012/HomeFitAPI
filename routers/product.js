@@ -242,7 +242,7 @@ router.get('/products/:id/model', async (req, res) => {
 		if (!product) {
 			res.status(404).send({ error: 'Product not found!' });
 		}
-		const url = `https://${req.headers.host}/uploads/${product._id}/scene.gltf`;
+		const url = `http://${req.headers.host}/uploads/${product._id}/scene.gltf`;
 		res.redirect(url);
 	} catch (e) {
 		res.status(404).send({ error: e });
