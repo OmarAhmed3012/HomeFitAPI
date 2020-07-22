@@ -242,12 +242,35 @@ router.get('/products/:id/model', async (req, res) => {
 		if (!product) {
 			res.status(404).send({ error: 'Product not found!' });
 		}
-		res.set('Content-Type', 'application/json');
-		const url = `http://${req.headers.host}/uploads/${product._id}/scene.gltf`;
-		console.log(url);
-		const { data } = await Axios.get(url);
+		const url = `https://${req.headers.host}/uploads/${product._id}/scene.gltf`;
+		res.redirect(url);
+	} catch (e) {
+		res.status(404).send({ error: e });
+	}
+});
 
-		res.send(data);
+router.get('/products/:id/model/bin', async (req, res) => {
+	try {
+		const product = await Product.findById(req.params.id).select('_id');
+		if (!product) {
+			res.status(404).send({ error: 'Product not found!' });
+		}
+		res.set('Content-Type', 'application/json');
+		const url = `http://${req.headers.host}/uploads/${product._id}/scene.bin`;
+		res.redirect(url);
+	} catch (e) {
+		res.status(404).send({ error: e });
+	}
+});
+
+router.get('/products/:id/model/:texture', async (req, res) => {
+	try {
+		const product = await Product.findById(req.params.id).select('_id');
+		if (!product) {
+			res.status(404).send({ error: 'Product not found!' });
+		}
+		const url = `http://${req.headers.host}/uploads/${product._id}/textures/${req.params.texture}`;
+		res.redirect(url);
 	} catch (e) {
 		res.status(404).send({ error: e });
 	}
