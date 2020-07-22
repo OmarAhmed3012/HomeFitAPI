@@ -225,7 +225,7 @@ router.post(
 
 router.post(
 	'/products/:id/texture',
-	uploadTexture.single('productTexture'),
+	uploadTexture.array('productTexture'),
 
 	async (req, res) => {
 		try {
