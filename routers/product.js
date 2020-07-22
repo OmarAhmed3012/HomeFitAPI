@@ -243,9 +243,8 @@ router.get('/products/:id/model', async (req, res) => {
 			res.status(404).send({ error: 'Product not found!' });
 		}
 		const url = `http://${req.headers.host}/uploads/${product._id}/scene.gltf`;
-		console.log(url);
 		const { data } = await Axios.get(url);
-
+		res.set('Content-Type', 'model/gltf+json');
 		res.send(data);
 	} catch (e) {
 		res.status(404).send({ error: e });
