@@ -38,6 +38,14 @@ router.get('/products', async (req, res) => {
 	}
 });
 
+router.get('/', async (req, res) => {
+	try {
+		return res.status(200).json('Welcome to HomeFit API');
+	} catch (e) {
+		return res.status(500).json(e);
+	}
+});
+
 router.get('/allproducts', async (req, res) => {
 	// const _id = req.params.id
 
@@ -243,7 +251,7 @@ router.get('/products/:id/model', async (req, res) => {
 			res.status(404).send({ error: 'Product not found!' });
 		}
 		const url = `http://${req.headers.host}/uploads/${product._id}/scene.gltf`;
-		const { data } = await Axios.get(url);
+		//const { data } = await Axios.get(url);
 		// res.set('Content-Type', 'model/gltf+json');
 		// res.send(data);
 		res.redirect(url);
