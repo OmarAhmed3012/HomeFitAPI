@@ -250,11 +250,16 @@ router.get('/products/:id/model', async (req, res) => {
 		if (!product) {
 			res.status(404).send({ error: 'Product not found!' });
 		}
-		const url = `http://${req.headers.host}/uploads/${product._id}/scene.gltf`;
+		var file = fs.createReadStream(`./uploads/${product._id}/scene.gltf`);
+		var stat = fs.statSync(`./uploads/${product._id}/scene.gltf`);
+		res.setHeader('Content-Length', stat.size);
+		res.setHeader('Content-Type', 'model/gltf+json');
+		res.setHeader('Content-Disposition', 'attachment; filename=scene.gltf');
+
+		//const url = `https://${req.headers.host}/uploads/${product._id}/scene.gltf`;
 		//const { data } = await Axios.get(url);
-		// res.set('Content-Type', 'model/gltf+json');
-		// res.send(data);
-		res.redirect(url);
+		file.pipe(res);
+		//res.redirect(url);
 	} catch (e) {
 		res.status(404).send({ error: e });
 	}
