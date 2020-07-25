@@ -40,7 +40,7 @@ router.get('/products', async (req, res) => {
 
 router.get('/', async (req, res) => {
 	try {
-		return res.status(200).json('Welcome to HomeFit API');
+		return res.status(200).json('Welcome to HomeFit!');
 	} catch (e) {
 		return res.status(500).json(e);
 	}
