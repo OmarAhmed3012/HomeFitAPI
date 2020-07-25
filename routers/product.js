@@ -40,12 +40,6 @@ router.get('/products', async (req, res) => {
 
 router.get('/', async (req, res) => {
 	try {
-		const obj2gltf = require('obj2gltf');
-		const fs = require('fs');
-		obj2gltf('Wooden Chair.obj').then(function (gltf) {
-			const data = Buffer.from(JSON.stringify(gltf));
-			fs.writeFileSync('model.gltf', data);
-		});
 		return res.status(200).json('Welcome to HomeFit API');
 	} catch (e) {
 		return res.status(500).json(e);
@@ -224,13 +218,21 @@ router.post(
 
 	async (req, res) => {
 		try {
-			let modelPath = req.files[0].path;
 			const product = await Product.findById(req.params.id);
-			product.model_path = modelPath.replace('\\', '/');
-			product.model_path = product.model_path.replace('\\', '/');
-			product.model_path = '/' + product.model_path;
-			product.save();
-			res.status(200).json({ product });
+			for (let i = 0; i < req.files.length; i++) {
+				if (
+					req.files[i].path.substr(req.files[i].path.length - 5) ===
+					'.gltf'
+				) {
+					let modelPath = req.files[i].path;
+					product.model_path = modelPath.replace('\\', '/');
+					product.model_path = product.model_path.replace('\\', '/');
+					product.model_path = '/' + product.model_path;
+					product.save();
+					res.status(200).json({ product });
+				}
+			}
+			res.status(404).json({ error: 'gltf file not found' });
 		} catch (error) {
 			res.status(500).json({ error });
 		}
@@ -256,18 +258,25 @@ router.get('/products/:id/model', async (req, res) => {
 		if (!product) {
 			res.status(404).send({ error: 'Product not found!' });
 		}
-		var file = fs.createReadStream(`./uploads/${product._id}/scene.gltf`);
-		var stat = fs.statSync(`./uploads/${product._id}/scene.gltf`);
-		res.setHeader('Content-Length', stat.size);
-		//res.setHeader('Content-Type', 'model/gltf+json');
-		res.setHeader('Content-Disposition', 'inline; filename=scene.gltf');
-		//res.setHeader('Content-Encoding', 'gzip');
-		//res.setHeader('X-Content-Type-Options', 'nosniff');
-		//res.setHeader('X-Frame-Options', 'deny');
-		//const url = `https://${req.headers.host}/uploads/${product._id}/scene.gltf`;
-		//const { data } = await Axios.get(url);
-		file.pipe(res);
-		//res.redirect(url);
+		const modelFolder = `./uploads/${product._id}`;
+		fs.readdir(modelFolder, (err, files) => {
+			files.forEach(filename => {
+				if (filename.substr(filename.length - 5) === '.gltf') {
+					var file = fs.createReadStream(
+						`./uploads/${product._id}/${filename}`
+					);
+					var stat = fs.statSync(
+						`./uploads/${product._id}/${filename}`
+					);
+					res.setHeader('Content-Length', stat.size);
+					res.setHeader(
+						'Content-Disposition',
+						`inline; filename=${filename}`
+					);
+					file.pipe(res);
+				}
+			});
+		});
 	} catch (e) {
 		res.status(404).send({ error: e });
 	}
@@ -282,15 +291,7 @@ router.get('/products/:id/:modelFile', async (req, res) => {
 		var file = fs.createReadStream(
 			`./uploads/${product._id}/${req.params.modelFile}`
 		);
-		var stat = fs.statSync(
-			`./uploads/${product._id}/${req.params.modelFile}`
-		);
-		res.setHeader('Content-Length', stat.size);
 		//res.setHeader('Content-Type', 'model/gltf+json');
-		res.setHeader(
-			'Content-Disposition',
-			`inline; filename=${req.params.modelFile}`
-		);
 		//res.setHeader('Content-Encoding', 'gzip');
 		//res.setHeader('X-Content-Type-Options', 'nosniff');
 		//res.setHeader('X-Frame-Options', 'deny');

@@ -7,13 +7,7 @@ const storage = multer.diskStorage({
 		fs.mkdir(`./uploads/${req.params.id}`, { recursive: true }, err => {
 			if (err) throw err;
 		});
-		fs.mkdir(
-			`./uploads/${req.params.id}/textures`,
-			{ recursive: true },
-			err => {
-				if (err) throw err;
-			}
-		);
+
 		cb(null, `./uploads/${req.params.id}`);
 	},
 	filename: function (req, file, cb) {
