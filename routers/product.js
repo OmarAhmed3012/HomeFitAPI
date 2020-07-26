@@ -24,6 +24,23 @@ router.post('/products/:id', async (req, res) => {
 	}
 });
 
+
+//Get the latest 4 products
+router.get('/fourproducts', async (req, res) => {
+
+	try {
+
+		const products = await Product.find({}).sort({'createdAt': -1}).skip(0).limit(4)
+		
+		return res.status(200).json(products);
+	} catch (e) {
+		return res.status(500).json(e);
+	}
+
+	
+})
+
+
 // GET /products?limit=10&skip=20
 router.get('/products', async (req, res) => {
 	try {
