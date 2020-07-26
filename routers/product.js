@@ -164,7 +164,7 @@ const upload = multer({
 		fileSize: 1000000,
 	},
 	fileFilter(req, file, cb) {
-		if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+		if (!file.originalname.match(/\.(jpg|jpeg|png|webp)$/)) {
 			return cb(new Error('Please upload an image'));
 		}
 
@@ -178,7 +178,6 @@ router.post(
 	async (req, res) => {
 		const buffer = await sharp(req.file.buffer)
 			.resize({ width: 250, height: 250 })
-			.png()
 			.toBuffer();
 		const product = await Product.findOne({ _id: req.params.id });
 		product.image = buffer;

@@ -73,6 +73,7 @@ const productSchema = new mongoose.Schema(
 		model_path: {
 			type: String,
 		},
+
 		categoryId: {
 			type: mongoose.Schema.Types.ObjectId,
 			required: true,
