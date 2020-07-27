@@ -274,7 +274,7 @@ router.get('/products/:id/model', async (req, res) => {
 		const modelFolder = `./uploads/${product._id}`;
 		fs.readdir(modelFolder, (err, files) => {
 			if (err) {
-				res.status(404).send({ error: 'Model file not found!' });
+				res.status(404).send({ error: 'Model files not found!' });
 			}
 			files.forEach(filename => {
 				if (filename.substr(filename.length - 5) === '.gltf') {
