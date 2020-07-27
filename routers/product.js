@@ -24,22 +24,19 @@ router.post('/products/:id', async (req, res) => {
 	}
 });
 
-
 //Get the latest 4 products
 router.get('/fourproducts', async (req, res) => {
-
 	try {
+		const products = await Product.find({})
+			.sort({ createdAt: -1 })
+			.skip(0)
+			.limit(4);
 
-		const products = await Product.find({}).sort({'createdAt': -1}).skip(0).limit(4)
-		
 		return res.status(200).json(products);
 	} catch (e) {
 		return res.status(500).json(e);
 	}
-
-	
-})
-
+});
 
 // GET /products?limit=10&skip=20
 router.get('/products', async (req, res) => {
@@ -276,6 +273,9 @@ router.get('/products/:id/model', async (req, res) => {
 		}
 		const modelFolder = `./uploads/${product._id}`;
 		fs.readdir(modelFolder, (err, files) => {
+			if (err) {
+				res.status(404).send({ error: 'Model file not found!' });
+			}
 			files.forEach(filename => {
 				if (filename.substr(filename.length - 5) === '.gltf') {
 					var file = fs.createReadStream(
@@ -307,14 +307,7 @@ router.get('/products/:id/:modelFile', async (req, res) => {
 		var file = fs.createReadStream(
 			`./uploads/${product._id}/${req.params.modelFile}`
 		);
-		//res.setHeader('Content-Type', 'model/gltf+json');
-		//res.setHeader('Content-Encoding', 'gzip');
-		//res.setHeader('X-Content-Type-Options', 'nosniff');
-		//res.setHeader('X-Frame-Options', 'deny');
-		//const url = `https://${req.headers.host}/uploads/${product._id}/scene.gltf`;
-		//const { data } = await Axios.get(url);
 		file.pipe(res);
-		//res.redirect(url);
 	} catch (e) {
 		res.status(404).send({ error: e });
 	}
@@ -329,22 +322,7 @@ router.get('/products/:id/textures/:texture', async (req, res) => {
 		var file = fs.createReadStream(
 			`./uploads/${product._id}/textures/${req.params.texture}`
 		);
-		var stat = fs.statSync(
-			`./uploads/${product._id}/textures/${req.params.texture}`
-		);
-		res.setHeader('Content-Length', stat.size);
-		//res.setHeader('Content-Type', 'model/gltf+json');
-		res.setHeader(
-			'Content-Disposition',
-			`inline; filename=${req.params.texture}`
-		);
-		//res.setHeader('Content-Encoding', 'gzip');
-		//res.setHeader('X-Content-Type-Options', 'nosniff');
-		//res.setHeader('X-Frame-Options', 'deny');
-		//const url = `https://${req.headers.host}/uploads/${product._id}/scene.gltf`;
-		//const { data } = await Axios.get(url);
 		file.pipe(res);
-		//res.redirect(url);
 	} catch (e) {
 		res.status(404).send({ error: e });
 	}
@@ -381,14 +359,5 @@ router.delete('/products/:id/model', async (req, res) => {
 		res.status(404).send();
 	}
 });
-
-// router.get('/uploads/5/scene.gltf', async (req, res) => {
-// 	try {
-// 		res.set('Content-Type', 'application/json');
-// 		console.log('hello');
-// 	} catch (e) {
-// 		res.status(404).send();
-// 	}
-// });
 
 module.exports = router;
