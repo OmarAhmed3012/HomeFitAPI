@@ -54,6 +54,7 @@ router.get('/products', async (req, res) => {
 
 router.get('/', async (req, res) => {
 	try {
+		console.log();
 		return res.status(200).json('Welcome to HomeFit!');
 	} catch (e) {
 		return res.status(500).json(e);
@@ -225,10 +226,27 @@ router.get('/products/:id/image', async (req, res) => {
 	}
 });
 
+router.post('/products/:id/modelLink', async (req, res) => {
+	try {
+		const product = await Product.findById(req.params.id);
+		if (product && req.body.modelLink) {
+			product.model_path = req.body.modelLink;
+			product.save();
+			res.status(200).send({
+				message: 'model link updated',
+				'model link': product.model_path,
+			});
+		} else {
+			res.status(500).send({ error: 'Something wrong happened!' });
+		}
+	} catch (error) {
+		res.status(500).send({ error });
+	}
+});
+
 router.post(
 	'/products/:id/model/',
 	uploadFile.array('productModel'),
-
 	async (req, res) => {
 		try {
 			const product = await Product.findById(req.params.id);
